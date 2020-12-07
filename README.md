@@ -22,11 +22,25 @@ This is a eigen version for ARCSim from [Berkeley Graphic Lab](http://graphics.b
 
 you can install those third party libraries using vcpkg or other package manager tools.
 
-### Build in Windows
+### Build On Windows
 
 you can use [vcpkg](https://github.com/microsoft/vcpkg) and [cmake](https://cmake.org/) to build the project as 
 
+`mkdir build`
+
+`cd build`
+
 `cmake .. "-DCMAKE_TOOLCHAIN_FILE="your vcpkg path"\vcpkg\scripts\buildsystems\vcpkg.cmake"`
+
+### Build On Linux
+
+you can build the project on linux with cmake and corresponding third party libraries as
+
+`mkdir build`
+
+`cd build`
+
+`cmake ..`
 
 ## ARCSim Readme
 
