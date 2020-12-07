@@ -28,14 +28,14 @@ you can use [vcpkg](https://github.com/microsoft/vcpkg) and [cmake](https://cmak
 
 `cmake .. "-DCMAKE_TOOLCHAIN_FILE="your vcpkg path"\vcpkg\scripts\buildsystems\vcpkg.cmake"`
 
-## ARCSim Usage
+## ARCSim Readme
 
-**********************************************************************
+```
       ARCSim v0.2.1: Adaptive Refining and Coarsening Simulator
 
       Rahul Narain, Armin Samii, Tobias Pfaff, and James O'Brien
               {narain,samii,tpfaff,job}@cs.berkeley.edu
-**********************************************************************
+```
 
 This software is provided freely for non-commercial use. See the
 LICENSE file for details. If you use the software in your research,
@@ -50,9 +50,7 @@ Rahul Narain, Tobias Pfaff, and James F. O'Brien. "Folding and
 Crumpling Adaptive Sheets". ACM Transactions on Graphics,
 32(4):51:1-8, July 2013. Proceedings of ACM SIGGRAPH 2013, Anaheim.
 
-======================================================================
- Usage
-======================================================================
+### Usage
 
 For compilation instructions, see the INSTALL file. If you're on a
 Mac, make sure you have the latest gcc, as described there.
@@ -102,9 +100,9 @@ as follows.
     <sshot-dir> is given, the rendered images are also saved there
     upon playback.
 
-----------------------------------------------------------------------
- Using the OpenGL interface
-----------------------------------------------------------------------
+
+#### Using the OpenGL interface
+
 
 Space:          start simulation/playback
 Left drag:      rotate
@@ -112,9 +110,8 @@ Middle drag:    translate
 Scroll wheel:   scale
 Esc:            exit
 
-----------------------------------------------------------------------
- Scene files
-----------------------------------------------------------------------
+
+#### Scene files
 
 The scene configuration files are written in JSON syntax
 (http://www.json.org/). A number of example scenes are provided in the
@@ -127,9 +124,7 @@ simulation. For a full description of all the options, see the file
 conf/sphere-annotated.json, which is a heavily commented version of
 conf/sphere.json and describes all the settings that can be used.
 
-======================================================================
- Creating meshes for simulation
-======================================================================
+#### Creating meshes for simulation
 
 Simulation meshes are saved as OBJ files, with the parametrization
 space embedding stored in texture coordinates, and other simulation
@@ -180,9 +175,7 @@ threshold between vertices to be merged.
 For an example of this procedure, see the meshes named tshirtm.obj,
 tshirtw.obj, and tshirt.obj in the meshes/ direectory.
 
-======================================================================
- Output files
-======================================================================
+#### Output files
 
 The output of the simulation consists of a number of files:
 
