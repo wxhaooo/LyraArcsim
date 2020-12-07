@@ -71,7 +71,6 @@ struct Simulation {
     };
 
     bool RunMode[debug];
-    };
     // handy pointers
     std::vector<Mesh*> cloth_meshes, obstacle_meshes;
 };
