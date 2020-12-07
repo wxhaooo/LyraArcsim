@@ -1,0 +1,43 @@
+// Square sheet of cloth interacting with moving sphere
+// Narain et al. 2012, Figure 2(b)
+{
+    "frame_time": 0.04,
+    "frame_steps": 8,
+    "end_time": 100,
+    "cloths": [{
+        "mesh": "meshes/untitled.obj",
+        "transform": {"translate": [-0.5, -1, 0.5]},
+        // "transform": {"translate": [0.5, 0, 0.5]},
+        "materials": [{"data": "materials/camel-ponte-roma.json",
+                       "thicken": 1, "damping": 0.05}],
+        "remeshing": {
+            "refine_angle": 0.3,
+            "refine_compression": 0.005,
+            "refine_velocity": 0.5,
+            "size": [10e-3, 200e-3],
+            "aspect_min": 0.2
+        }
+    }],
+    "handles": [{"nodes": [0], "label": -1}],
+    "motions": [[
+        {"time": 3.0, "transform": {"translate": [0,0.05,0]}},
+        {"time": 3.1, "transform": {"translate": [0,-0.1,0]}},
+        {"time": 3.2, "transform": {"translate": [0,0.1,0]}},
+        {"time": 3.3, "transform": {"translate": [0,-0.1,0]}},
+        {"time": 3.4, "transform": {"translate": [0,0.1,0]}},
+        {"time": 3.5, "transform": {"translate": [0,-0.1,0]}},
+        {"time": 3.6, "transform": {"translate": [0,0.1,0]}},
+        {"time": 3.7, "transform": {"translate": [0,-0.1,0]}},
+        {"time": 3.8, "transform": {"translate": [0,0.1,0]}},
+        {"time": 3.9, "transform": {"translate": [0,-0.1,0]}},
+        {"time": 4.0, "transform": {"translate": [0,0.05,0]}}
+    ]],
+    //"obstacles": [{
+    //    "mesh": "meshes/sphere.obj",
+    //    "motion": 0
+    //}],
+    "gravity": [0, 0, -9.8],
+    "magic": {"repulsion_thickness": 5e-3, "collision_stiffness": 1e6},
+    // "proximity", "physics", "strainlimiting", "collision", "remeshing", "separation",  "popfilter", "plasticity"
+    "disable": ["strainlimiting", "remeshing", "plasticity"]
+}

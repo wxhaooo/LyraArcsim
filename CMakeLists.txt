@@ -1,0 +1,69 @@
+cmake_minimum_required(VERSION 3.0)
+project(LyraArcsim)
+
+set(CMAKE_CXX_STANDARD 14)
+
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+
+FIND_PACKAGE(Eigen3 REQUIRED)
+find_package(jsoncpp CONFIG REQUIRED)
+find_package(libpng CONFIG REQUIRED)
+find_package(OpenMP QUIET REQUIRED)
+find_package(GLUT REQUIRED)
+find_package(Boost QUIET COMPONENTS filesystem system date_time REQUIRED)
+
+if(WIN32)
+option(USE_VCPKG "Using VCPKG" on)
+endif(WIN32)
+
+if(UNIX)
+option(USE_VCPKG "Using VCPKG" off)
+endif(UNIX)
+
+if(USE_VCPKG)
+set(VCPKG_ROOT_DIR "D:/Softwares/Programming/vcpkg")
+# set(VCPKG_ROOT_DIR "D:/Programming/vcpkg")
+set(VCPKG_INCLUDE_DIR "${VCPKG_ROOT_DIR}/installed/x64-windows/include")
+set(VCPKG_LIB_DIR "${VCPKG_ROOT_DIR}/installed/x64-windows/lib")
+message("vcpkg root dir is ${VCPKG_ROOT_DIR}")
+message("vcpkg include dir is ${VCPKG_INCLUDE_DIR}")
+message("vcpkg library dir is ${VCPKG_LIB_DIR}")
+endif(USE_VCPKG)
+
+if(APPLE)
+  if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+        set(OpenMP_C "${CMAKE_C_COMPILER}")
+        set(OpenMP_C_FLAGS "-Xpreprocessor -fopenmp -lomp -Wno-unused-command-line-argument")
+        set(OpenMP_C_LIB_NAMES "libomp" "libgomp" "libiomp5")
+        set(OpenMP_libomp_LIBRARY ${OpenMP_C_LIB_NAMES})
+        set(OpenMP_libgomp_LIBRARY ${OpenMP_C_LIB_NAMES})
+        set(OpenMP_libiomp5_LIBRARY ${OpenMP_C_LIB_NAMES})
+    endif()
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+      set(OpenMP_CXX "${CMAKE_CXX_COMPILER}")
+      set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp -lomp -Wno-unused-command-line-argument")
+      set(OpenMP_CXX_LIB_NAMES "libomp" "libgomp" "libiomp5")
+      set(OpenMP_libomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+      set(OpenMP_libgomp_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+      set(OpenMP_libiomp5_LIBRARY ${OpenMP_CXX_LIB_NAMES})
+    endif()
+    set(OpenMP_EXE_LINKER_FLAGS "-lomp")
+    link_directories(${OpenMP_LINK_DIRECTORIES})
+endif()
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+
+include_directories(${EIGEN3_INCLUDE_DIR})
+include_directories(${VCPKG_INCLUDE_DIR})
+include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/deps)
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/deps/alglib)
+
+file(GLOB ARCSIM_SOURCES "${PROJECT_SOURCE_DIR}/src/*")
+
+add_executable(Arcsim ${ARCSIM_SOURCES})
+
+# call for alglib jsoncpp and eigen3 in which jsoncpp and eigen3 is managed by vcpkg
+target_link_libraries(Arcsim alglib png jsoncpp_lib Eigen3::Eigen GLUT::GLUT ${Boost_LIBRARIES})
