@@ -1,6 +1,34 @@
-This is a eigen version for ARCSim from [Berkeley Graphic Lab](http://graphics.berkeley.edu/resources/ARCSim/),
+# README
 
-There is origin README in ARCSim.
+This is a eigen version for ARCSim from [Berkeley Graphic Lab](http://graphics.berkeley.edu/resources/ARCSim/)
+
+## Build
+
+### Build Tools
+
+* cmake (Version > 3.0)
+> [cmake download page](https://cmake.org/)
+* vcpkg(Windows)
+> [vcpkg download page](https://github.com/microsoft/vcpkg)
+
+### Third Party Libraries
+
+* boost
+* eigen3
+* jsoncpp
+* glut
+* libpng
+* openMP
+
+you can install those third party libraries using vcpkg or other package manager tools.
+
+### Build in Windows
+
+you can use [vcpkg](https://github.com/microsoft/vcpkg) and [cmake](https://cmake.org/) to build the project as 
+
+`cmake .. "-DCMAKE_TOOLCHAIN_FILE="your vcpkg path"\vcpkg\scripts\buildsystems\vcpkg.cmake"`
+
+## ARCSim Usage
 
 **********************************************************************
       ARCSim v0.2.1: Adaptive Refining and Coarsening Simulator
