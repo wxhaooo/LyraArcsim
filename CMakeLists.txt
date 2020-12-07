@@ -7,7 +7,12 @@ set(CMAKE_CXX_STANDARD 14)
 
 FIND_PACKAGE(Eigen3 REQUIRED)
 find_package(jsoncpp CONFIG REQUIRED)
+if(WIN32)
 find_package(libpng CONFIG REQUIRED)
+elseif(UNIX)
+find_package(PNG REQUIRED)
+find_package(OpenGL REQUIRED)
+endif(UNIX)
 find_package(OpenMP QUIET REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(Boost QUIET COMPONENTS filesystem system date_time REQUIRED)
@@ -67,4 +72,9 @@ file(GLOB ARCSIM_SOURCES "${PROJECT_SOURCE_DIR}/src/*")
 add_executable(Arcsim ${ARCSIM_SOURCES})
 
 # call for alglib jsoncpp and eigen3 in which jsoncpp and eigen3 is managed by vcpkg
+
+if(WIN32)
 target_link_libraries(Arcsim alglib png jsoncpp_lib Eigen3::Eigen GLUT::GLUT ${Boost_LIBRARIES} ${VCPKG_LIB_DIR}/FreeImage.lib)
+elseif(UNIX)
+target_link_libraries(Arcsim alglib png jsoncpp_lib GLUT::GLUT ${OPENGL_LIBRARIES} ${Boost_LIBRARIES} freeimage)
+endif(UNIX)

@@ -5,6 +5,8 @@ import jstyleson as js
 
 ARCSimPath = None
 
+width = 20
+
 OS = sys.platform
 
 if OS == 'win32':
@@ -20,6 +22,8 @@ with open(jsonConfigPath,'r') as f:
     jsonDataWithoutComment = ''.join(line for line in f if not line.startswith('//'))
     jsonData = js.loads(jsonDataWithoutComment)
 
-jsonData['handles'][0]['nodes'] = 1
-
-print(jsonData['handles'][0]['nodes'])
+for i in range(0,width + 1):
+    jsonData['handles'][0]['nodes'] = i
+    configFileName = 
+    js.dumps(jsonData)
+    # print(jsonData['handles'][0]['nodes'])
