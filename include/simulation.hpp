@@ -63,6 +63,15 @@ struct Simulation {
           PopFilter, Plasticity, nModules};
     bool enabled[nModules];
     Timer timers[nModules];
+
+    enum {
+        Simulate, Simulateoffline, resume, display_resume,
+        resume_physics, display_replay, merge_meshes,
+        split_meshes, display_testing, tri2obj, debug
+    };
+
+    bool RunMode[debug];
+    };
     // handy pointers
     std::vector<Mesh*> cloth_meshes, obstacle_meshes;
 };

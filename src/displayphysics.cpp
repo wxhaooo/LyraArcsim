@@ -78,7 +78,7 @@ static void keyboard (unsigned char key, int x, int y) {
 }
 
 void display_physics (const vector<string> &args) {
-    if (args.size() != 1 && args.size() != 2) {
+    if (args.size() != 2 && args.size() != 3) {
         cout << "Runs the simulation with an OpenGL display." << endl;
         cout << "Arguments:" << endl;
         cout << "    <scene-file>: JSON file describing the simulation setup"
@@ -86,8 +86,8 @@ void display_physics (const vector<string> &args) {
         cout << "    <out-dir> (optional): Directory to save output in" << endl;
         exit(EXIT_FAILURE);
     }
-    string json_file = args[0];
-    string outprefix = args.size()>1 ? args[1] : "";
+    string json_file = args[1];
+    string outprefix = args.size()>1 ? args[2] : "";
     if (!outprefix.empty())
         ensure_existing_directory(outprefix);
     init_physics(json_file, outprefix, false);
@@ -95,6 +95,7 @@ void display_physics (const vector<string> &args) {
     boost::filesystem::create_directories(outprefix + "/images");
     if (!outprefix.empty())
         save(sim, 0);
+    sim.RunMode[Simulation::Simulate] = true;
     GlutCallbacks cb;
     cb.idle = idle;
     cb.keyboard = keyboard;
@@ -102,7 +103,7 @@ void display_physics (const vector<string> &args) {
 }
 
 void display_resume (const vector<string> &args) {
-    if (args.size() != 2) {
+    if (args.size() != 3) {
         cout << "Resumes an incomplete simulation." << endl;
         cout << "Arguments:" << endl;
         cout << "    <out-dir>: Directory containing simulation output files"

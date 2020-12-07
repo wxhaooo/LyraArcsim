@@ -183,7 +183,10 @@ void save_image(int n)
 void sim_step() {
     fps.tick();
     advance_step(sim);
-    save_image(sim.frame);
+
+	if (sim.RunMode[Simulation::Simulate])
+        save_image(sim.frame);
+	
     if (sim.step % sim.frame_steps == 0) {
         save(sim, sim.frame);
         save_timings();
@@ -199,7 +202,7 @@ void offline_loop() {
 }
 
 void run_physics (const vector<string> &args) {
-    if (args.size() != 1 && args.size() != 2) {
+    if (args.size() != 2 && args.size() != 3) {
         cout << "Runs the simulation in batch mode." << endl;
         cout << "Arguments:" << endl;
         cout << "    <scene-file>: JSON file describing the simulation setup"
@@ -207,18 +210,19 @@ void run_physics (const vector<string> &args) {
         cout << "    <out-dir> (optional): Directory to save output in" << endl;
         exit(EXIT_FAILURE);
     }
-    string json_file = args[0];
-    string outprefix = args.size()>1 ? args[1] : "";
+    string json_file = args[1];
+    string outprefix = args.size()>1 ? args[2] : "";
     init_physics(json_file, outprefix, false);
     if (!outprefix.empty())
         save(sim, 0);
+    sim.RunMode[Simulation::Simulateoffline] = true;
     offline_loop();
 }
 
 void init_resume(const vector<string> &args) {
-    assert(args.size() == 2);
-    string outprefix = args[0];
-    string start_frame_str = args[1];
+    assert(args.size() == 3);
+    string outprefix = args[1];
+    string start_frame_str = args[2];
     // Load like we would normally begin physics
     init_physics(stringf("%s/conf.json", outprefix.c_str()), outprefix, true);
     // Get the initialization information
@@ -233,7 +237,7 @@ void init_resume(const vector<string> &args) {
 }
 
 void resume_physics (const vector<string> &args) {
-    if (args.size() != 2) {
+    if (args.size() != 3) {
         cout << "Resumes an incomplete simulation in batch mode." << endl;
         cout << "Arguments:" << endl;
         cout << "    <out-dir>: Directory containing simulation output files"

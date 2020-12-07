@@ -56,7 +56,8 @@ int main (int argc, char **argv) {
     int nactions = sizeof(actions)/sizeof(Action);
     string name = (argc <= 1) ? "" : argv[1];
     vector<string> args;
-    for (int a = 2; a < argc; a++)
+	//a = 2 in origin ARCSim, if occur any problem, please check whether this affects the result
+    for (int a = 1; a < argc; a++)
         args.push_back(argv[a]);
     for (int i = 0; i < nactions; i++) {
         if (name == actions[i].name) {

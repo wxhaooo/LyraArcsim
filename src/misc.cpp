@@ -42,17 +42,17 @@ void tri2obj (const vector<string> &args) {
         exit(EXIT_FAILURE);
     }
     assert(args.size() == 2);
-    triangle_to_obj(args[0], args[1]);
+    triangle_to_obj(args[1], args[2]);
 }
 
 void merge_meshes (const vector<string> &args) {
     assert(args.size() == 3 || args.size() == 4);
     Mesh meshm, meshw;
-    load_obj(meshm, args[0]);
-    load_obj(meshw, args[1]);
+    load_obj(meshm, args[1]);
+    load_obj(meshw, args[2]);
     assert(meshm.nodes.size() == meshw.nodes.size());
     Mesh mesh;
-    double merge_dist = args.size()==4 ? atof(args[3].c_str()) : 1e-2;
+    double merge_dist = args.size()==5 ? atof(args[4].c_str()) : 1e-2;
     for (int n = 0; n < meshm.nodes.size(); n++) {
         Vert *vert = new Vert(project<2>(meshm.nodes[n]->x),
                               meshm.nodes[n]->label);
@@ -80,13 +80,13 @@ void merge_meshes (const vector<string> &args) {
                           mesh.verts[face->v[1]->node->index],
                           mesh.verts[face->v[2]->node->index], face->label));
     }
-    save_obj(mesh, args[2]);
+    save_obj(mesh, args[3]);
 }
 
 void split_meshes (const vector<string> &args) {
-    assert(args.size() == 3);
+    assert(args.size() == 4);
     Mesh mesh;
-    load_obj(mesh, args[0]);
+    load_obj(mesh, args[1]);
     Mesh meshm, meshw;
     for (int v = 0; v < mesh.verts.size(); v++) {
         const Vert *vert = mesh.verts[v];
@@ -106,6 +106,6 @@ void split_meshes (const vector<string> &args) {
                            meshw.verts[face->v[1]->index],
                            meshw.verts[face->v[2]->index], face->label));
     }
-    save_obj(meshm, args[1]);
-    save_obj(meshw, args[2]);
+    save_obj(meshm, args[2]);
+    save_obj(meshw, args[3]);
 }

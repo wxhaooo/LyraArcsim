@@ -100,7 +100,7 @@ static void special (int key, int x, int y) {
 }
 
 void display_replay (const vector<string> &args) {
-    if (args.size() < 1 || args.size() > 2) {
+    if (args.size() < 2 || args.size() > 3) {
         cout << "Replays the results of a simulation." << endl;
         cout << "Arguments:" << endl;
         cout << "    <out-dir>: Directory containing simulation output files"
@@ -108,8 +108,8 @@ void display_replay (const vector<string> &args) {
         cout << "    <sshot-dir> (optional): Directory to save images" << endl;
         exit(EXIT_FAILURE);
     }
-    ::inprefix = args[0];
-    ::outprefix = args.size()>1 ? args[1] : "";
+    ::inprefix = args[1];
+    ::outprefix = args.size()>1 ? args[2] : "";
     ::frameskip = 1;
     if (!::outprefix.empty())
         ensure_existing_directory(::outprefix);

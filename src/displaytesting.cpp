@@ -84,8 +84,8 @@ void display_testing (const vector<string> &args) {
              << endl;
         exit(EXIT_FAILURE);
     }
-    string conf = args[0];
-    string meshfile = args[1];
+    string conf = args[1];
+    string meshfile = args[2];
     load_json(conf, sim);
     prepare(sim);
     load_obj(*sim.cloth_meshes[0], meshfile);
