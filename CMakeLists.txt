@@ -11,6 +11,7 @@ find_package(libpng CONFIG REQUIRED)
 find_package(OpenMP QUIET REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(Boost QUIET COMPONENTS filesystem system date_time REQUIRED)
+# find_package(FreeImage QUIET REQUIRED)
 
 if(WIN32)
 option(USE_VCPKG "Using VCPKG" on)
@@ -66,4 +67,4 @@ file(GLOB ARCSIM_SOURCES "${PROJECT_SOURCE_DIR}/src/*")
 add_executable(Arcsim ${ARCSIM_SOURCES})
 
 # call for alglib jsoncpp and eigen3 in which jsoncpp and eigen3 is managed by vcpkg
-target_link_libraries(Arcsim alglib png jsoncpp_lib Eigen3::Eigen GLUT::GLUT ${Boost_LIBRARIES})
+target_link_libraries(Arcsim alglib png jsoncpp_lib Eigen3::Eigen GLUT::GLUT ${Boost_LIBRARIES} ${VCPKG_LIB_DIR}/FreeImage.lib)

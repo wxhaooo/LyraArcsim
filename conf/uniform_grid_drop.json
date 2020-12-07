@@ -1,5 +1,3 @@
-// Square sheet of cloth interacting with moving sphere
-// Narain et al. 2012, Figure 2(b)
 {
     "frame_time": 0.04,
     "frame_steps": 8,

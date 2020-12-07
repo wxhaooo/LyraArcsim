@@ -369,7 +369,7 @@ void save_png (const char *filename, int width, int height,
 void ensure_existing_directory (const std::string &path) {
     using namespace boost::filesystem;
     if (!exists(path))
-        create_directory(path);
+        create_directories(path);
     if (!is_directory(path)) {
         cout << "Error: " << path << " is not a directory!" << endl;
         abort();

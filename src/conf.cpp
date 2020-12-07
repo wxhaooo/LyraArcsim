@@ -103,7 +103,8 @@ void load_json (const string &configFilename, Simulation &sim) {
     }
     sim.time = 0;
     parse(sim.cloths, json["cloths"]);
-    parse_motions(sim.motions, json["motions"]);
+    if (!json["motions"].empty())
+        parse_motions(sim.motions, json["motions"]);
     parse_handles(sim.handles, json["handles"], sim.cloths, sim.motions);
     parse_obstacles(sim.obstacles, json["obstacles"], sim.motions);
     parse_morphs(sim.morphs, json["morphs"], sim.cloths);

@@ -34,9 +34,13 @@
 #include "timer.hpp"
 #include "util.hpp"
 #include <boost/filesystem.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/lexical_cast.hpp>
 #include <cstdio>
 #include <fstream>
-
+#include<sstream>
+#include <GL/gl.h>
+#include <FreeImage.h>
 using namespace std;
 
 static string outprefix;
@@ -48,8 +52,23 @@ Timer fps;
 
 void copy_file (const string &input, const string &output);
 
-void init_physics (const string &json_file, string outprefix,
+void init_physics (const string &json_file, string& outprefix,
                    bool is_reloading) {
+
+    boost::filesystem::path newFilePath(json_file);
+    std::string fileName = newFilePath.filename().string();
+    fileName = fileName.substr(0, fileName.find_last_of("."));
+	
+    std::string curTime =
+        boost::posix_time::to_iso_string(boost::posix_time::second_clock::local_time());
+    std::replace(curTime.begin(), curTime.end(), 'T', '_');
+    outprefix = outprefix + "/" + fileName + "/" + curTime;
+
+    if (!outprefix.empty())
+        ensure_existing_directory(outprefix);
+
+    boost::filesystem::create_directory(outprefix + "/motion_meshes");
+	
     load_json(json_file, sim);
     ::outprefix = outprefix;
     if (!outprefix.empty()) {
@@ -71,19 +90,28 @@ void init_physics (const string &json_file, string outprefix,
 }
 
 static void save (const vector<Mesh*> &meshes, int frame) {
-    if (!outprefix.empty() && frame < 10000)
-        save_objs(meshes, stringf("%s/%04d", outprefix.c_str(), frame));
+    if (!outprefix.empty())
+    {
+        for (int m = 0; m < meshes.size(); m++)
+        {
+            save_obj(*meshes[m], stringf("%s/motion_meshes/%02d_%08d.obj", outprefix.c_str(), m, frame));
+        }
+    }
+        // save_objs(meshes, stringf("%s/%04d", outprefix.c_str(), frame));
+    // if (!outprefix.empty() && frame < 10000)
+    //     save_objs(meshes, stringf("%s/%04d", outprefix.c_str(), frame));
 }
 
 static void save_obstacle_transforms (const vector<Obstacle> &obs, int frame,
                                       double time) {
-    if (!outprefix.empty() && frame < 10000) {
+    if (!outprefix.empty()) {
         for (int o = 0; o < obs.size(); o++) {
             Transformation trans = identity();
             if (obs[o].transform_spline)
                 trans = get_dtrans(*obs[o].transform_spline, time).first;
-            save_transformation(trans, stringf("%s/%04dobs%02d.txt",
-                                               outprefix.c_str(), frame, o));
+        	
+            save_transformation(trans, stringf("%s/%02dobs%08d.txt",
+                outprefix.c_str(), o, frame));
         }
     }
 }
@@ -105,9 +133,57 @@ void save (const Simulation &sim, int frame) {
     save_obstacle_transforms(sim.obstacles, frame, sim.time);
 }
 
+void save_image(int n)
+{
+    int width = 1280 / 2, height = 720;
+    std::string dirPrefix = outprefix + "/images";
+
+    std::string fileName;
+
+    char fileNameBuffer[256];
+
+#if WIN32
+    snprintf(fileNameBuffer, 256, "%s/%08d.jpg", dirPrefix.c_str(), n);
+#else __linux__
+    std::snprintf(fileNameBuffer, 256, "%s/%08d.jpg", dirPrefix.c_str(), n);
+#endif
+
+    fileName = fileNameBuffer;
+	
+    unsigned char* mpixels = new unsigned char[width * height * 3];
+    //glReadBuffer(GL_FRONT);
+    glReadBuffer(GL_BACK);
+    glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, mpixels);
+    for (int i = 0; i < (int)width * height * 3; i += 3) {
+        mpixels[i] ^= mpixels[i + 2] ^= mpixels[i] ^= mpixels[i + 2];
+    }
+    FIBITMAP* bitmap = FreeImage_Allocate(width, height, 24, 8, 8, 8);
+
+    for (int y = 0; y < FreeImage_GetHeight(bitmap); y++) {
+        BYTE* bits = FreeImage_GetScanLine(bitmap, y);
+        for (int x = 0; x < FreeImage_GetWidth(bitmap); x++) {
+            bits[0] = mpixels[(y * width + x) * 3 + 0];
+            bits[1] = mpixels[(y * width + x) * 3 + 1];
+            bits[2] = mpixels[(y * width + x) * 3 + 2];
+            bits += 3;
+        }
+    }
+
+    if (!FreeImage_Save(FIF_JPEG, bitmap, fileName.c_str(), JPEG_DEFAULT)) {
+        std::cerr << "Saving Image failed\n";
+        FreeImage_Unload(bitmap);
+        delete[] mpixels;
+        return;
+    }
+
+    FreeImage_Unload(bitmap);
+    delete[] mpixels;
+}
+
 void sim_step() {
     fps.tick();
     advance_step(sim);
+    save_image(sim.frame);
     if (sim.step % sim.frame_steps == 0) {
         save(sim, sim.frame);
         save_timings();
@@ -133,8 +209,6 @@ void run_physics (const vector<string> &args) {
     }
     string json_file = args[0];
     string outprefix = args.size()>1 ? args[1] : "";
-    if (!outprefix.empty())
-        ensure_existing_directory(outprefix);
     init_physics(json_file, outprefix, false);
     if (!outprefix.empty())
         save(sim, 0);

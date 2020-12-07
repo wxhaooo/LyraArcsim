@@ -40,6 +40,7 @@
 #include <cstdio>
 #include <fstream>
 #include <sstream>
+#include <boost/filesystem.hpp>
 using namespace std;
 
 #ifndef NO_OPENGL
@@ -52,6 +53,7 @@ static bool running = false;
 static void idle () {
     if (!::running)
         return;
+	
     sim_step();
     redisplay();
 }
@@ -89,6 +91,8 @@ void display_physics (const vector<string> &args) {
     if (!outprefix.empty())
         ensure_existing_directory(outprefix);
     init_physics(json_file, outprefix, false);
+	
+    boost::filesystem::create_directories(outprefix + "/images");
     if (!outprefix.empty())
         save(sim, 0);
     GlutCallbacks cb;
