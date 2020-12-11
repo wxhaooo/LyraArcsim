@@ -41,6 +41,7 @@
 #include <fstream>
 #include <sstream>
 #include <boost/filesystem.hpp>
+#include "log.hpp"
 using namespace std;
 
 #ifndef NO_OPENGL
@@ -48,6 +49,7 @@ using namespace std;
 extern string outprefix;
 extern fstream timingfile;
 
+// static Log log;
 static bool running = false;
 
 static void idle () {

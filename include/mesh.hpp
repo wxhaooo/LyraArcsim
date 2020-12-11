@@ -150,6 +150,8 @@ struct Mesh {
     void remove (Node *node);
     void remove (Edge *edge);
     void remove (Face *face);
+
+    float PrevVelocityNorm;
 };
 
 template <typename Prim> const std::vector<Prim*> &get (const Mesh &mesh);

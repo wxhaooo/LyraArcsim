@@ -382,7 +382,7 @@ void parse_node_handle (vector<Handle*> &hans, const Json::Value &json,
     vector<int> ns;
     parse(c, json["cloth"], 0);
     parse(l, json["label"], -1);
-    if (l == -1)
+    if (l == -1) 
         parse(ns, json["nodes"]);
     parse(m, json["motion"], -1);
     const Mesh &mesh = cloths[c].mesh;
@@ -402,6 +402,8 @@ void parse_node_handle (vector<Handle*> &hans, const Json::Value &json,
         for (int i = 0; i < ns.size(); i++) {
             NodeHandle *han = new NodeHandle;
             han->node = mesh.nodes[ns[i]];
+        	//Add as needed
+            han->node->label = -1;
             han->node->preserve = true;
             han->motion = motion;
             hans.push_back(han);

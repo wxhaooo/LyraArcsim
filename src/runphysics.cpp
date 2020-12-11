@@ -41,6 +41,7 @@
 #include<sstream>
 #include <GL/gl.h>
 #include <FreeImage.h>
+#include "log.hpp"
 using namespace std;
 
 static string outprefix;
@@ -182,7 +183,14 @@ void save_image(int n)
 
 void sim_step() {
     fps.tick();
+
+    Log* log = Log::getInstance();
+	
     advance_step(sim);
+
+    log->setFrame(sim.step);
+    log->output();
+    log->reset();
 
 	if (sim.RunMode[Simulation::Simulate])
         save_image(sim.frame);

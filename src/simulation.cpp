@@ -186,8 +186,15 @@ void physics_step (Simulation &sim, const vector<Constraint*> &cons) {
 }
 
 void step_mesh (Mesh &mesh, double dt) {
-    for (int n = 0; n < mesh.nodes.size(); n++)
-        mesh.nodes[n]->x += mesh.nodes[n]->v*dt;
+    float velocityNorm = 0.f;
+    for (int n = 0; n < mesh.nodes.size(); n++) {
+        velocityNorm += norm(mesh.nodes[n]->v);
+        mesh.nodes[n]->x += mesh.nodes[n]->v * dt;
+    }
+
+	//stop when mesh is stationary
+    if (velocityNorm - mesh.PrevVelocityNorm < 0.001)
+        exit(0);
 }
 
 void plasticity_step (Simulation &sim) {
