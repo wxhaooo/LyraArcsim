@@ -1,4 +1,5 @@
-/build
-/meshes
-/output
-/batching/batching_conf/
+/build/*
+/meshes/*
+/output/*
+/batching_conf/*
+/scripts/*
