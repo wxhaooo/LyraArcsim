@@ -110,6 +110,7 @@ void load_json (const string &configFilename, Simulation &sim) {
     parse_morphs(sim.morphs, json["morphs"], sim.cloths);
     parse(sim.gravity, json["gravity"], Vec3(0));
     parse(sim.wind, json["wind"]);
+    // std::cout <<  sim.wind.velocity[0] << "\n";
     parse(sim.friction, json["friction"], 0.6);
     parse(sim.obs_friction, json["obs_friction"], 0.3);
     string module_names[] = {"proximity", "physics", "strainlimiting",

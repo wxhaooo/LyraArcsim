@@ -418,12 +418,12 @@ void add_external_forces (const Cloth &cloth, const Vec3 &gravity,
     const Mesh &mesh = cloth.mesh;
     for (int n = 0; n < mesh.nodes.size(); n++)
         fext[n] += mesh.nodes[n]->m*gravity;
-    //for (int f = 0; f < mesh.faces.size(); f++) {
-    //    const Face *face = mesh.faces[f];
-    //    Vec3 fw = wind_force(face, wind);
-    //    for (int v = 0; v < 3; v++)
-    //        fext[face->v[v]->node->index] += fw/3.;
-    //}
+    for (int f = 0; f < mesh.faces.size(); f++) {
+        const Face *face = mesh.faces[f];
+        Vec3 fw = wind_force(face, wind);
+        for (int v = 0; v < 3; v++)
+            fext[face->v[v]->node->index] += fw / 3.;
+    }
 }
 
 void add_morph_forces (const Cloth &cloth, const Morph &morph, double t,
