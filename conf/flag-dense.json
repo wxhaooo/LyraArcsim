@@ -24,5 +24,6 @@
     "gravity": [0, 0, -9.8],
     "wind": {"velocity": [10, 0, 0],"density":1.0},
     "magic": {"repulsion_thickness": 10e-3, "collision_stiffness": 1e6},
-    "disable": ["remeshing"]
+    "disable": ["remeshing"],
+    "save_subframe": true
 }

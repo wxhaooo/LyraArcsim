@@ -71,6 +71,7 @@ struct Simulation {
     };
 
     bool RunMode[debug];
+    bool SaveSubFrame;
     // handy pointers
     std::vector<Mesh*> cloth_meshes, obstacle_meshes;
 };

@@ -194,10 +194,17 @@ void sim_step() {
 
 	if (sim.RunMode[Simulation::Simulate])
         save_image(sim.frame);
-	
-    if (sim.step % sim.frame_steps == 0) {
+    if (sim.SaveSubFrame)
+    {
         save(sim, sim.frame);
         save_timings();
+    }
+    else
+    {
+        if (sim.step % sim.frame_steps == 0) {
+            save(sim, sim.frame);
+            save_timings();
+        }
     }
     fps.tock();
     if (sim.time >= sim.end_time || sim.frame >= sim.end_frame)
