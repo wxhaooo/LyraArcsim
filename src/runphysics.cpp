@@ -192,15 +192,19 @@ void sim_step() {
     log->output();
     log->reset();
 
-	if (sim.RunMode[Simulation::Simulate])
-        save_image(sim.frame);
     if (sim.SaveSubFrame)
     {
-        save(sim, sim.frame);
+        if (sim.RunMode[Simulation::Simulate])
+            save_image(sim.step);
+    	
+        save(sim, sim.step);
         save_timings();
     }
     else
     {
+        if (sim.RunMode[Simulation::Simulate])
+            save_image(sim.frame);
+    	
         if (sim.step % sim.frame_steps == 0) {
             save(sim, sim.frame);
             save_timings();
