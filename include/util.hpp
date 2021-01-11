@@ -33,6 +33,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <numeric>
 
 static int MAX_POINT_NUM = std::numeric_limits<int>::min();
 
