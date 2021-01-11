@@ -35,7 +35,7 @@
 #include <vector>
 #include <numeric>
 
-static int MAX_POINT_NUM = std::numeric_limits<int>::min();
+static int MAX_POINT_NUM = -1;
 
 #define EPSILON		1e-7f
 
