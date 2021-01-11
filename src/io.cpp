@@ -215,6 +215,9 @@ void save_obj (const Mesh &mesh, const string &filename) {
         if (vert->label)
             file << "vl " << vert->label << endl;
     }
+
+    MAX_POINT_NUM = std::max(MAX_POINT_NUM, static_cast<int>(mesh.nodes.size()));
+	
     for (int n = 0; n < mesh.nodes.size(); n++) {
         const Node *node = mesh.nodes[n];
         file << "v " << node->x[0] << " " << node->x[1] << " "

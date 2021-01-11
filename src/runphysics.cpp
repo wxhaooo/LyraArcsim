@@ -42,6 +42,7 @@
 #include <GL/gl.h>
 #include <FreeImage.h>
 #include "log.hpp"
+#include<boost/format.hpp>
 using namespace std;
 
 static string outprefix;
@@ -211,8 +212,12 @@ void sim_step() {
         }
     }
     fps.tock();
-    if (sim.time >= sim.end_time || sim.frame >= sim.end_frame)
+    std::cout << boost::format("process: %f/%f\r") % sim.time % sim.end_time << std::flush;
+    // std::cout << boost::format("process: %d/%d\r") % sim.frame % sim.end_frame << std::flush;
+    if (sim.time >= sim.end_time || sim.frame >= sim.end_frame) {
+        std::cout << boost::format("Max point number in process: %1%") % MAX_POINT_NUM << "\n";
         exit(EXIT_SUCCESS);
+    }
 }
 
 void offline_loop() {

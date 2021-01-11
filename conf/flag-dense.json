@@ -3,7 +3,9 @@
 {
     "frame_time": 0.04,
     "frame_steps": 8,
-    "duration": 20,
+    "end_time": 12,
+
+    "duration": 12,
     "cloths": [{
         "mesh": "meshes/flag-dense.obj",
 	"transform": {"translate": [0, 0, 0], "rotate": [120, 1, 1, 1]},

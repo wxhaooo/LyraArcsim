@@ -34,6 +34,8 @@
 #include <string>
 #include <vector>
 
+static int MAX_POINT_NUM = std::numeric_limits<int>::min();
+
 #define EPSILON		1e-7f
 
 // i+1 and i-1 modulo 3
