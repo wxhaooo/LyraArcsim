@@ -114,12 +114,17 @@ void load_json (const string &configFilename, Simulation &sim) {
         parse(sim.SaveSubFrame, json["save_subframe"]);
     else
         sim.SaveSubFrame = false;
+
+    if (!json["save_extra_data"].empty())
+        parse(sim.SaveExtraData, json["save_extra_data"]);
+    else
+        sim.SaveExtraData = false;
     // std::cout <<  sim.wind.velocity[0] << "\n";
     parse(sim.friction, json["friction"], 0.6);
     parse(sim.obs_friction, json["obs_friction"], 0.3);
     string module_names[] = {"proximity", "physics", "strainlimiting",
                              "collision", "remeshing", "separation",
-                             "popfilter", "plasticity"};
+                             "popfilter", "plasticity","relax_init_state"};
     for (int i = 0; i < Simulation::nModules; i++) {
         sim.enabled[i] = true;
         for (int j = 0; j < json["disable"].size(); j++)

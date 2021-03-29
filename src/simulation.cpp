@@ -83,7 +83,7 @@ void relax_initial_state (Simulation &sim) {
     bool equilibrate = true;
     if (equilibrate) {
         equilibration_step(sim);
-        //remeshing_step(sim, true);
+        remeshing_step(sim, true);
         equilibration_step(sim);
     } else {
         remeshing_step(sim, true);
@@ -176,7 +176,7 @@ void physics_step (Simulation &sim, const vector<Constraint*> &cons) {
             if (sim.morphs[m].mesh == &sim.cloths[c].mesh)
                 add_morph_forces(sim.cloths[c], sim.morphs[m], sim.time,
                                  sim.step_time, fext, Jext);
-        implicit_update(sim.cloths[c], fext, Jext, cons, sim.step_time, false);
+        implicit_update(sim.cloths[c], fext, Jext, cons, sim.step_time, false, sim.SaveExtraData);
     }
     for (int c = 0; c < sim.cloth_meshes.size(); c++)
         step_mesh(*sim.cloth_meshes[c], sim.step_time);

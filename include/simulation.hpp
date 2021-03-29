@@ -59,8 +59,10 @@ struct Simulation {
     Vec3 gravity;
     Wind wind;
     double friction, obs_friction;
-    enum {Proximity, Physics, StrainLimiting, Collision, Remeshing, Separation,
-          PopFilter, Plasticity, nModules};
+    enum {
+        Proximity, Physics, StrainLimiting, Collision, Remeshing, Separation,
+        PopFilter, Plasticity, RelaxInitState, nModules
+    };
     bool enabled[nModules];
     Timer timers[nModules];
 
@@ -72,6 +74,7 @@ struct Simulation {
 
     bool RunMode[debug];
     bool SaveSubFrame;
+    bool SaveExtraData;
     // handy pointers
     std::vector<Mesh*> cloth_meshes, obstacle_meshes;
 };

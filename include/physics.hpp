@@ -44,8 +44,8 @@ double external_energy (const Cloth &cloth, const Vec3 &gravity,
 // also adds damping terms
 // if dt == 0, just does A += dF/dx; b += F instead, no damping
 template <Space s>
-void add_internal_forces (const Cloth &cloth, SpMat<Mat3x3> &A,
-                          std::vector<Vec3> &b, double dt);
+void add_internal_forces(const Cloth& cloth, SpMat<Mat3x3>& A,
+    std::vector<Vec3>& b, double dt, bool save_extra_data = false);
 
 void add_constraint_forces (const Cloth &cloth,
                             const std::vector<Constraint*> &cons,
@@ -59,9 +59,9 @@ void add_morph_forces (const Cloth &cloth, const Morph &morph, double t,
                        double dt,
                        std::vector<Vec3> &fext, std::vector<Mat3x3> &Jext);
 
-void implicit_update (Cloth &cloth, const std::vector<Vec3> &fext,
-                      const std::vector<Mat3x3> &Jext,
-                      const std::vector<Constraint*> &cons, double dt,
-                      bool update_positions=true);
+void implicit_update(Cloth& cloth, const std::vector<Vec3>& fext,
+    const std::vector<Mat3x3>& Jext,
+    const std::vector<Constraint*>& cons, double dt,
+    bool update_positions = true, bool save_extra_data = false);
 
 #endif

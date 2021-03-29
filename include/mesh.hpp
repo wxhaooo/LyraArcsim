@@ -152,6 +152,9 @@ struct Mesh {
     void remove (Face *face);
 
     float PrevVelocityNorm;
+
+    std::vector<Mat3x3> cached_F;
+    std::vector<Vec3> cached_b;
 };
 
 template <typename Prim> const std::vector<Prim*> &get (const Mesh &mesh);

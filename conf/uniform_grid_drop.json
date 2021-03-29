@@ -4,7 +4,7 @@
     "end_time": 100,
     "cloths": [{
         "mesh": "meshes/untitled.obj",
-        "transform": {"translate": [-0.5, -1, 0.5]},
+        "transform": {"translate": [-0.5, -1, 0.5],"rotate": [90, 1,0,0]},
         // "transform": {"translate": [0.5, 0, 0.5]},
         "materials": [{"data": "materials/camel-ponte-roma.json",
                        "thicken": 1, "damping": 0.05}],
@@ -16,7 +16,7 @@
             "aspect_min": 0.2
         }
     }],
-    "handles": [{"nodes": [0], "label": -1}],
+    "handles": [{"nodes": [0,19], "label": -1}],
     // "motions": [[
     //     {"time": 3.0, "transform": {"translate": [0,0.05,0]}},
     //     {"time": 3.1, "transform": {"translate": [0,-0.1,0]}},
@@ -36,6 +36,7 @@
     //}],
     "gravity": [0, 0, -9.8],
     "magic": {"repulsion_thickness": 5e-3, "collision_stiffness": 1e6},
+    "wind": {"velocity": [0, 1, 0],"density":1.0},
     // "proximity", "physics", "strainlimiting", "collision", "remeshing", "separation",  "popfilter", "plasticity"
     "disable": ["strainlimiting", "remeshing", "plasticity"]
 }

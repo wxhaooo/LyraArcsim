@@ -95,8 +95,8 @@ pair<Mat9x9,Vec9> stretching_force (const Face *face) {
              Dv = kronecker(rowmat(dv), Mat3x3(1));
     const Vec3 &xu = F.col(0), &xv = F.col(1); // should equal Du*mat_to_vec(X)
     Vec9 fuu = Du.t()*xu, fvv = Dv.t()*xv, fuv = (Du.t()*xv + Dv.t()*xu)/2.;
-    Vec9 grad_e = k[0]*G(0,0)*fuu + k[2]*G(1,1)*fvv
-                + k[1]*(G(0,0)*fvv + G(1,1)*fuu) + k[3] * G(0, 1) * fuv;//2.*k[3]*G(0,1)*fuv;
+    Vec9 grad_e = k[0] * G(0, 0) * fuu + k[2] * G(1, 1) * fvv
+        + k[1] * (G(0, 0) * fvv + G(1, 1) * fuu) + k[3] * G(0, 1) * fuv;//2.*k[3]*G(0,1)*fuv;
 	Mat9x9 hess_e = k[0] * (outer(fuu, fuu) + max(G(0, 0), 0.) * Du.t() * Du)
 		+ k[2] * (outer(fvv, fvv) + max(G(1, 1), 0.) * Dv.t() * Dv)
 		+ k[1] * (outer(fuu, fvv) + max(G(0, 0), 0.) * Dv.t() * Dv
@@ -242,11 +242,52 @@ template double internal_energy<WS> (const Cloth&);
 // A = dt^2 J + dt damp J
 // b = dt f + dt^2 J v + dt damp J v
 
+template<Space s>
+void CachedMapping(const Mesh* mesh)
+{
+    Mesh* TmpMesh = const_cast<Mesh*>(mesh);
+    TmpMesh->cached_F.clear();
+    TmpMesh->cached_b.clear();
+	
+    TmpMesh->cached_F.resize(TmpMesh->nodes.size(),Mat3x3(1));
+    TmpMesh->cached_b.resize(TmpMesh->nodes.size(),Vec3());
+	
+    for (int f = 0; f < TmpMesh->faces.size(); f++)
+    {
+        const Face* face = TmpMesh->faces[f];
+        Mat3x2 F = derivative(pos<s>(face->v[0]->node), pos<s>(face->v[1]->node),
+            pos<s>(face->v[2]->node), face);
+
+        Mat3x3 FTmp = Mat3x3(1);
+    	
+        FTmp(0, 0) = F(0, 0); FTmp(0, 1) = F(0, 1);
+        FTmp(1, 0) = F(1, 0); FTmp(1, 1) = F(1, 1);
+        FTmp(2, 0) = F(2, 0); FTmp(2, 1) = F(2, 1);
+
+        TmpMesh->cached_F[face->v[0]->index] = TmpMesh->cached_F[face->v[0]->index] * FTmp;
+        TmpMesh->cached_F[face->v[1]->index] = TmpMesh->cached_F[face->v[1]->index] * FTmp;
+        TmpMesh->cached_F[face->v[2]->index] = TmpMesh->cached_F[face->v[2]->index] * FTmp;
+    }
+
+    for (int i = 0; i < TmpMesh->nodes.size(); i++)
+	{
+        int index = TmpMesh->nodes[i]->index;
+        Vec3 tmp_u = Vec3(TmpMesh->nodes[i]->verts[0]->u[0], TmpMesh->nodes[i]->verts[0]->u[1], 0.f);
+        TmpMesh->cached_b[index] =
+            (TmpMesh->nodes[i]->x - TmpMesh->cached_F[index] * tmp_u);
+	}
+}
+
 template <Space s>
 void add_internal_forces (const Cloth &cloth, SpMat<Mat3x3> &A,
-                          vector<Vec3> &b, double dt) {
+                          vector<Vec3> &b, double dt, bool save_extra_data) {
     const Mesh &mesh = cloth.mesh;
+    // Mesh& mesh = cloth.mesh;
     ::materials = &cloth.materials;
+
+	if(save_extra_data)
+		CachedMapping<s>(&mesh);
+	
     for (int f = 0; f < mesh.faces.size(); f++) {
         const Face* face = mesh.faces[f];
         const Node *n0 = face->v[0]->node, *n1 = face->v[1]->node,
@@ -289,10 +330,10 @@ void add_internal_forces (const Cloth &cloth, SpMat<Mat3x3> &A,
         }
     }
 }
-template void add_internal_forces<PS> (const Cloth&, SpMat<Mat3x3>&,
-                                       vector<Vec3>&, double);
-template void add_internal_forces<WS> (const Cloth&, SpMat<Mat3x3>&,
-                                       vector<Vec3>&, double);
+template void add_internal_forces<PS>(const Cloth&, SpMat<Mat3x3>&,
+    vector<Vec3>&, double, bool);
+template void add_internal_forces<WS>(const Cloth&, SpMat<Mat3x3>&,
+    vector<Vec3>&, double, bool);
 
 bool contains (const Mesh &mesh, const Node *node) {
     return node->index < mesh.nodes.size() && mesh.nodes[node->index] == node;
@@ -372,7 +413,7 @@ void project_outside (Mesh &mesh, const vector<Constraint*> &cons);
 void implicit_update (Cloth &cloth, const vector<Vec3> &fext,
                       const vector<Mat3x3> &Jext,
                       const vector<Constraint*> &cons, double dt,
-                      bool update_positions) {
+                      bool update_positions,bool save_extra_data) {
     Mesh &mesh = cloth.mesh;
     vector<Vert*>::iterator vert_it;
     vector<Face*>::iterator face_it;
@@ -388,7 +429,7 @@ void implicit_update (Cloth &cloth, const vector<Vec3> &fext,
         A(n,n) += Mat3x3(node->m) - dt*dt*Jext[n];
         b[n] += dt*fext[n];
     }
-    add_internal_forces<WS>(cloth, A, b, dt);
+    add_internal_forces<WS>(cloth, A, b, dt,save_extra_data);
     add_constraint_forces(cloth, cons, A, b, dt);
     add_friction_forces(cloth, cons, A, b, dt);
     vector<Vec3> dv = taucs_linear_solve(A, b);

@@ -70,6 +70,7 @@ void init_physics (const string &json_file, string& outprefix,
         ensure_existing_directory(outprefix);
 
     boost::filesystem::create_directory(outprefix + "/motion_meshes");
+    // boost::filesystem::create_directory(outprefix + "/motion_meshes/cached_data");
 	
     load_json(json_file, sim);
     ::outprefix = outprefix;
@@ -87,16 +88,43 @@ void init_physics (const string &json_file, string& outprefix,
     prepare(sim);
     if (!is_reloading) {
         separate_obstacles(sim.obstacle_meshes, sim.cloth_meshes);
-        relax_initial_state(sim);
+    	if(sim.enabled[Simulation::RelaxInitState])
+			relax_initial_state(sim);
     }
 }
 
-static void save (const vector<Mesh*> &meshes, int frame) {
+void save_cached_data(const Mesh& mesh, const string& filename)
+{
+    fstream file(filename.c_str(), ios::out);
+
+    assert(mesh.cached_F.size() == mesh.cached_b.size());
+
+    file << boost::format("# CachedData file: init_pos,Cached_F,Cache_b for every point\n");
+    file << "\n";
+    for (int i = 0; i < mesh.cached_F.size(); i++)
+	{
+        Vec2 init_pos = mesh.nodes[i]->verts[0]->u;
+        Mat3x3 cached_F = mesh.cached_F[i];
+        Vec3 cached_b = mesh.cached_b[i];
+
+        file << boost::format("[%1%,%2%] [%3%,%4%;%5%,%6%;%7%,%8%] [%9%,%10%,%11%]\n")
+            % init_pos[0] % init_pos[1]
+            % cached_F(0, 0) % cached_F(0, 1)
+            % cached_F(1, 0) % cached_F(1, 1)
+            % cached_F(2, 0) % cached_F(2, 1)
+            % cached_b[0] % cached_b[1] % cached_b[2];
+	}
+	
+    file.close();
+}
+
+static void save(const vector<Mesh*>& meshes, int frame, bool save_extra_data = false) {
     if (!outprefix.empty())
     {
         for (int m = 0; m < meshes.size(); m++)
         {
-            save_obj(*meshes[m], stringf("%s/motion_meshes/%02d_%08d.obj", outprefix.c_str(), m, frame));
+            save_obj(*meshes[m], stringf("%s/motion_meshes/%02d_%08d.obj", outprefix.c_str(), m, frame), save_extra_data);
+            // save_cached_data(*meshes[m], stringf("%s/motion_meshes/cached_data/%02d_%08d.cache", outprefix.c_str(), m, frame));;
         }
     }
         // save_objs(meshes, stringf("%s/%04d", outprefix.c_str(), frame));
@@ -131,7 +159,7 @@ static void save_timings () {
 }
 
 void save (const Simulation &sim, int frame) {
-    save(sim.cloth_meshes, frame);
+    save(sim.cloth_meshes, frame, sim.SaveExtraData);
     save_obstacle_transforms(sim.obstacles, frame, sim.time);
 }
 

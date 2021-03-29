@@ -36,6 +36,7 @@
 #include <fstream>
 #include <png.h>
 #include <sstream>
+#include <boost/format.hpp>
 using namespace std;
 
 // OBJ meshes
@@ -165,6 +166,9 @@ void load_obj (Mesh &mesh, const string &filename) {
     }
     mark_nodes_to_preserve(mesh);
     compute_ms_data(mesh);
+
+    mesh.cached_F.resize(mesh.nodes.size(), Mat3x3(1));
+    mesh.cached_b.resize(mesh.nodes.size(), Vec3());
 }
 
 void load_objs (vector<Mesh*> &meshes, const string &prefix) {
@@ -207,14 +211,14 @@ vector<Face*> triangulate (const vector<Vert*> &verts) {
     return tris;
 }
 
-void save_obj (const Mesh &mesh, const string &filename) {
+void save_obj (const Mesh &mesh, const string &filename,bool save_extra_data) {
     fstream file(filename.c_str(), ios::out);
-    for (int v = 0; v < mesh.verts.size(); v++) {
-        const Vert *vert = mesh.verts[v];
-        file << "vt " << vert->u[0] << " " << vert->u[1] << endl;
-        if (vert->label)
-            file << "vl " << vert->label << endl;
-    }
+    // for (int v = 0; v < mesh.verts.size(); v++) {
+    //     const Vert *vert = mesh.verts[v];
+    //     file << "vt " << vert->u[0] << " " << vert->u[1] << endl;
+    //     if (vert->label)
+    //         file << "vl " << vert->label << endl;
+    // }
 
     MAX_POINT_NUM = std::max(MAX_POINT_NUM, static_cast<int>(mesh.nodes.size()));
 	
@@ -222,6 +226,7 @@ void save_obj (const Mesh &mesh, const string &filename) {
         const Node *node = mesh.nodes[n];
         file << "v " << node->x[0] << " " << node->x[1] << " "
              << node->x[2] << endl;
+        file << "vt " << node->verts[0]->u[0] << " " << node->verts[0]->u[1] << endl;
         if (norm2(node->x - node->y))
             file << "ny " << node->y[0] << " " << node->y[1] << " "
                  << node->y[2] << endl;
@@ -230,6 +235,23 @@ void save_obj (const Mesh &mesh, const string &filename) {
                  << node->v[2] << endl;
         if (node->label)
             file << "nl " << node->label << endl;
+    }
+
+    if (save_extra_data)
+    {
+        for (int n = 0; n < mesh.cached_F.size(); n++)
+        {
+            Mat3x3 F = mesh.cached_F[n];
+            file << boost::format("vf %1% %2% %3% %4% %5% %6%\n")
+                % F(0, 0) % F(0, 1) % F(1, 0) % F(1, 1) % F(2, 0) % F(2, 1);
+        }
+
+        for (int n = 0; n < mesh.cached_b.size(); n++)
+        {
+            Vec3 b = mesh.cached_b[n];
+            file << boost::format("vb %1% %2% %3%\n")
+                % b[0] % b[1] % b[2];
+        }
     }
     for (int e = 0; e < mesh.edges.size(); e++) {
         const Edge *edge = mesh.edges[e];
@@ -260,6 +282,7 @@ void save_obj (const Mesh &mesh, const string &filename) {
         if (face->damage)
             file << "td " << face->damage << endl;
     }
+    file.close();
 }
 
 void save_objs (const vector<Mesh*> &meshes, const string &prefix) {
