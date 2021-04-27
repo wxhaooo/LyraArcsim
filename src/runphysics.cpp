@@ -88,8 +88,8 @@ void init_physics (const string &json_file, string& outprefix,
     prepare(sim);
     if (!is_reloading) {
         separate_obstacles(sim.obstacle_meshes, sim.cloth_meshes);
-    	if(sim.enabled[Simulation::RelaxInitState])
-			relax_initial_state(sim);
+    	// if(sim.enabled[Simulation::RelaxInitState])
+		relax_initial_state(sim);
     }
 }
 

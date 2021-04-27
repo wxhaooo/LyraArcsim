@@ -62,7 +62,7 @@
         "motion": 3
     }],
     "gravity": [0, 0, -9.8],
-    // "obs_friction": 0.2,
-    "disable": ["strainlimiting"],
+    "obs_friction": 0.2,
+    // "disable": ["strainlimiting"],
     "magic": {"collision_stiffness": 1e11, "handle_stiffness": 1e4}
 }

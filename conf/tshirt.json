@@ -88,11 +88,11 @@
         "start_time": 1.5,
         "end_time": 4
     }],
-    "handles": [ 
-        {"nodes": [29, 91], "end_time": 1},
-        {"nodes": [29], "motion": 0, "start_time": 4.5},
-        {"nodes": [91], "motion": 1, "start_time": 4.5}
-    ],
+    // "handles": [ 
+    //     {"nodes": [29, 91], "end_time": 1},
+    //     {"nodes": [29], "motion": 0, "start_time": 4.5},
+    //     {"nodes": [91], "motion": 1, "start_time": 4.5}
+    // ],
     "gravity": [0, 0, -9.8],
     "disable": ["popfilter"],
     "magic": {"repulsion_thickness": 5e-3, "collision_stiffness": 1e6}
